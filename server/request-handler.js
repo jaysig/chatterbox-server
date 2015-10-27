@@ -23,6 +23,9 @@ exports.requestHandler = function(request, response) {
   // http://nodejs.org/documentation/api/
 
   // Do some basic logging.
+  if (request.method === 'POST') {
+    console.log('we are posting');
+  }
   //
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
@@ -30,7 +33,6 @@ exports.requestHandler = function(request, response) {
   console.log("Serving request type " + request.method + " for url " + request.url);
   // console.log(request);
   // console.log(response);
-  
 
   // The outgoing status.
   var statusCode = 200;
@@ -51,6 +53,7 @@ exports.requestHandler = function(request, response) {
   var otherObject = { item1: "item1val", item2: "item2val" };
   var json = JSON.stringify({
       anObject: otherObject,
+      results: [],
       anArray: otherArray,
       another: "item"
     });
