@@ -2,8 +2,10 @@ var app;
 $(document).ready(function() {
 
 //Initialized App
-app = { 
-  server: 'https://api.parse.com/1/classes/chatterbox',
+var server1 = 'https://api.parse.com/1/classes/chatterbox'
+var server2 = "http://127.0.0.1:3000/classes/chatterbox"
+app = {
+  server: server2,
   username: window.location.search.substr(10),
   room: 'lobby',
   roomList: ['lobby'],
@@ -17,7 +19,7 @@ app = {
 
   send: function(message){
     $.ajax({
-      url: 'https://api.parse.com/1/classes/chatterbox',
+      url: server2,
       type: 'POST',
       data: JSON.stringify(message),
       contentType: 'application/json',
@@ -35,7 +37,7 @@ app = {
   fetch: function(){
     $.ajax({
       type: 'GET',
-      url: 'https://api.parse.com/1/classes/chatterbox',
+      url: server2,
       contentType: 'application/json',
       data: {order: '-createdAt'},
       success: function (data) {
@@ -93,7 +95,7 @@ app = {
 
   addRoom: function(lobby) {
     $('#roomSelect').append("<option>" + lobby + "</option>");
-    $('option').last().addClass(lobby); 
+    $('option').last().addClass(lobby);
   },
 
   addFriend: function(evt) {
@@ -101,7 +103,7 @@ app = {
     var username = $(evt.currentTarget).attr('data-username');
     if (username !== undefined){
       console.log('chatbox: adding as a friend', username);
-      
+
       app.friends[username] = true;
     }
   }
@@ -139,6 +141,3 @@ $( "select" ).change(function() {
 
 });
 //
-
-
-

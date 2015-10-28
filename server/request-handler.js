@@ -11,7 +11,9 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-
+// var url = require( "url" );
+// var queryString = require( "querystring" );
+var messagesArray = [];
 exports.requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -23,9 +25,7 @@ exports.requestHandler = function(request, response) {
   // http://nodejs.org/documentation/api/
 
   // Do some basic logging.
-  if (request.method === 'POST') {
-    console.log('we are posting');
-  }
+
   //
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
@@ -37,26 +37,65 @@ exports.requestHandler = function(request, response) {
   // The outgoing status.
   var statusCode = 200;
 
-  // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
+  // var theUrl = url.parse( request.url );
+  // var queryObj = queryString.parse( theUrl.query );
+  // var obj = JSON.parse( queryObj.jsonData );
+  // console.log(obj.username);
+  //Content
 
-  // Tell the client we are sending them plain text.
-  //
-  // You will need to change this if you are sending something
-  // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = "application/json";
+// See the note below about CORS headers.
+var headers = defaultCorsHeaders;
 
-  // .writeHead() writes to the request line and headers of the response,
-  // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
-  var otherArray = ["item1", "item2"];
-  var otherObject = { item1: "item1val", item2: "item2val" };
-  var json = JSON.stringify({
-      anObject: otherObject,
-      results: [],
-      anArray: otherArray,
-      another: "item"
-    });
+// Tell the client we are sending them plain text.
+//
+// You will need to change this if you are sending something
+// other than plain text, like JSON or HTML.
+headers['Content-Type'] = "application/json";
+
+// .writeHead() writes to the request line and headers of the response,
+// which includes the status and all headers.
+
+//response.writeHead(statusCode, headers);
+
+var body = "";
+var jsonObj = {
+  results: messagesArray,
+};
+var stringify = false;
+var json = JSON.stringify(jsonObj);
+request.on('data', function (chunk) {
+
+  body += chunk;
+  if (body !== "undefined"){
+    messagesArray.push(body);
+  }
+  if (jsonObj) {
+    jsonObj.results = messagesArray;
+    json = JSON.stringify(jsonObj);
+    stringify = true;
+    response.end(json);
+  }
+});
+
+
+if (request.method === 'POST') {
+  if (request.url === '/classes/room1' || request.url === '/classes/messages') {
+    response.writeHead(201, headers);
+    // Post was added
+  }
+}
+  if (request.method === 'GET') {
+    if (request.url === '/classes/room1') {
+      response.writeHead(statusCode, headers);
+      // Connected to the route
+    }
+  }
+
+  if (request.url === '/arglebargle') {
+    response.writeHead(404, headers);
+    // This route doesn't exist; so, we return 404
+  }
+
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -64,6 +103,7 @@ exports.requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
+  console.log(json);
   response.end(json);
 };
 
