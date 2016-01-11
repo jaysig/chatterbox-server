@@ -15,41 +15,15 @@ this file and include it in basic-server.js so that it actually works.
 // var queryString = require( "querystring" );
 var messagesArray = [];
 exports.requestHandler = function(request, response) {
-  // Request and Response come from node's http module.
-  //
-  // They include information about both the incoming request, such as
-  // headers and URL, and about the outgoing response, such as its status
-  // and content.
-  //
-  // Documentation for both request and response can be found in the HTTP section at
-  // http://nodejs.org/documentation/api/
 
-  // Do some basic logging.
-
-  //
-  // Adding more logging to your server can be an easy way to get passive
-  // debugging help, but you should always be careful about leaving stray
-  // console.logs in your code.
   console.log("Serving request type " + request.method + " for url " + request.url);
-  // console.log(request);
-  // console.log(response);
 
-  // The outgoing status.
   var statusCode = 200;
 
-  // var theUrl = url.parse( request.url );
-  // var queryObj = queryString.parse( theUrl.query );
-  // var obj = JSON.parse( queryObj.jsonData );
-  // console.log(obj.username);
-  //Content
 
-// See the note below about CORS headers.
 var headers = defaultCorsHeaders;
 
-// Tell the client we are sending them plain text.
-//
-// You will need to change this if you are sending something
-// other than plain text, like JSON or HTML.
+
 headers['Content-Type'] = "application/json";
 
 // .writeHead() writes to the request line and headers of the response,
@@ -61,7 +35,7 @@ var body = "";
 var jsonObj = {
   results: messagesArray,
 };
-var stringify = false;
+
 var json = JSON.stringify(jsonObj);
 request.on('data', function (chunk) {
 
@@ -72,7 +46,6 @@ request.on('data', function (chunk) {
   if (jsonObj) {
     jsonObj.results = messagesArray;
     json = JSON.stringify(jsonObj);
-    stringify = true;
     response.end(json);
   }
 });
@@ -81,6 +54,7 @@ request.on('data', function (chunk) {
 if (request.method === 'POST') {
   if (request.url === '/classes/room1' || request.url === '/classes/messages') {
     response.writeHead(201, headers);
+
     // Post was added
   }
 }
